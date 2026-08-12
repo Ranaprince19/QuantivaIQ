@@ -1,0 +1,3 @@
+# Place your CSV datasets here.
+# The ETL pipeline (python/etl_pipeline.py) will auto-discover and load them.
+# If no CSVs are found, synthetic data will be generated using Faker.

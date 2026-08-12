@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block content %}
+  {% if not db_ok %}
+    <div class="alert">
+      <div class="status-indicator error"></div>
+      <div>
+        <h3 style="margin-top: 0;">Database Connection Offline</h3>
+        <p>The dashboard could not establish a connection to the configured database. Please verify your settings:</p>
+        <ul>
+          <li>For PostgreSQL: Ensure the server is online and credentials are correct.</li>
+          <li>For SQLite: Check if <code>quantivaiq.db</code> exists in the project root directory.</li>
+          <li>Command to seed: <code>python python/db_setup.py</code> and <code>python python/etl_pipeline.py</code></li>
+        </ul>
+        {% if db_error %}
+          <p><strong>Error Details:</strong> <code>{{ db_error }}</code></p>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    <!-- KPI Metric Cards -->
+    <div class="card-grid">
+      <div class="card" style="border-left: 4px solid var(--accent-indigo);">
+        <h2>Total Customers</h2>
+        <p>{{ total_customers | inr_num }}</p>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--accent-cyan);">
+        <h2>Total Orders</h2>
+        <p>{{ total_orders | inr_num }}</p>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--accent-emerald);">
+        <h2>Total Revenue</h2>
+        <p>{{ total_revenue | inr }}</p>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--accent-rose);">
+        <h2>Fraud Cases Flagged</h2>
+        <p>{{ fraud_cases }}</p>
+      </div>
+    </div>
+
+    <!-- Analytics Tables Grid -->
+    <div class="section-grid">
+      <div class="card">
+        <h2 class="section-title">
+          <svg style="width:18px;height:18px;fill:var(--accent-indigo)" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+          Top Products by Revenue
+        </h2>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th style="text-align: right;">Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in top_products %}
+                <tr>
+                  <td style="font-weight: 500; color: #FFFFFF;">{{ row.product_name }}</td>
+                  <td style="text-align: right; font-weight: 600; color: var(--accent-emerald);">{{ row.revenue | inr }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">
+          <svg style="width:18px;height:18px;fill:var(--accent-cyan)" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/></svg>
+          Revenue by Region
+        </h2>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Region</th>
+                <th style="text-align: right;">Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in revenue_by_region %}
+                <tr>
+                  <td style="font-weight: 500; color: #FFFFFF;">{{ row.region }}</td>
+                  <td style="text-align: right; font-weight: 600; color: var(--accent-cyan);">{{ row.revenue | inr }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-grid">
+      <div class="card">
+        <h2 class="section-title">
+          <svg style="width:18px;height:18px;fill:var(--accent-purple)" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          Customer Segments
+        </h2>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Segment Name</th>
+                <th style="text-align: right;">Customers Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in segments %}
+                <tr>
+                  <td style="font-weight: 500; color: #FFFFFF;">{{ row.segment_name }}</td>
+                  <td style="text-align: right; font-weight: 600; color: var(--accent-purple);">{{ row.customers | inr_num }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Power BI Section -->
+    {% if pbi_available %}
+      <div class="section" style="margin-top: 40px;">
+        <div class="card" style="border: 1px solid rgba(242, 200, 17, 0.25);">
+          <h2 class="section-title" style="color: #F2C811;">
+            <svg style="width:18px;height:18px;fill:#F2C811;margin-right:4px;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+            Power BI Report Integration
+          </h2>
+          <div id="powerbi-report" style="height:600px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); background: #000; padding:8px; overflow:hidden;"></div>
+        </div>
+      </div>
+      <script src="https://cdn.powerbi.com/libs/powerbi-client/2.19.0/powerbi.min.js"></script>
+      <script>
+        async function embedReport(){
+          try{
+            const resp = await fetch('/powerbi/embed');
+            if(!resp.ok){ console.error('Power BI embed fetch failed', resp.status); return; }
+            const cfg = await resp.json();
+            const embedConfig = {
+              type: 'report',
+              id: cfg.reportId,
+              embedUrl: cfg.embedUrl,
+              accessToken: cfg.embedToken,
+              tokenType: window.powerbi.models.TokenType.Embed
+            };
+            const reportContainer = document.getElementById('powerbi-report');
+            window.powerbi.reset(reportContainer);
+            window.powerbi.embed(reportContainer, embedConfig);
+          }catch(e){ console.error('Power BI embed error', e); }
+        }
+        embedReport();
+      </script>
+    {% endif %}
+  {% endif %}
+{% endblock %}

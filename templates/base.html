@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="10">
+    <title>QuantivaIQ Enterprise Dashboard</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg-color: #080B11;
+        --card-bg: rgba(17, 24, 39, 0.6);
+        --card-border: rgba(255, 255, 255, 0.06);
+        --text-primary: #F3F4F6;
+        --text-secondary: #9CA3AF;
+        --accent-indigo: #6366F1;
+        --accent-purple: #A855F7;
+        --accent-cyan: #06B6D4;
+        --accent-emerald: #10B981;
+        --accent-rose: #F43F5E;
+      }
+
+      * {
+        box-sizing: border-box;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-primary);
+        min-height: 100vh;
+        background-image: 
+          radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+          radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+        background-attachment: fixed;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .header-info h1 {
+        font-family: 'Outfit', sans-serif;
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, #FFF 20%, #A855F7 60%, #6366F1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .header-info p {
+        margin: 8px 0 0;
+        font-size: 1rem;
+        color: var(--text-secondary);
+        font-weight: 400;
+      }
+
+      .status-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: var(--accent-emerald);
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--accent-emerald);
+        border-radius: 50%;
+        box-shadow: 0 0 12px var(--accent-emerald);
+        animation: pulse 1.8s infinite;
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(0.9); opacity: 0.6; }
+        50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 16px var(--accent-emerald); }
+        100% { transform: scale(0.9); opacity: 0.6; }
+      }
+
+      /* Grid & Card Styles */
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        padding: 24px;
+        backdrop-filter: blur(16px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent-indigo), var(--accent-purple));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(99, 102, 241, 0.3);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      .card:hover::before {
+        opacity: 1;
+      }
+
+      .card h2 {
+        margin: 0 0 12px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+        font-weight: 600;
+      }
+
+      .card p {
+        margin: 0;
+        font-size: 2.2rem;
+        font-weight: 700;
+        font-family: 'Outfit', sans-serif;
+        color: #FFFFFF;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      }
+
+      /* Sections & Tables */
+      .section-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+      }
+
+      .section {
+        margin: 0;
+      }
+
+      .section-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0 0 16px;
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-top: 12px;
+      }
+
+      th, td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        font-size: 0.9rem;
+      }
+
+      th {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        color: #FFFFFF;
+        background: rgba(255, 255, 255, 0.02);
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      th:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+      }
+
+      th:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.015);
+        color: #FFFFFF;
+      }
+
+      /* Alerts & States */
+      .alert {
+        background: rgba(244, 63, 94, 0.08);
+        border: 1px solid rgba(244, 63, 94, 0.2);
+        color: #FDA4AF;
+        padding: 24px;
+        border-radius: 16px;
+        backdrop-filter: blur(16px);
+        margin-bottom: 30px;
+      }
+
+      .alert h2 {
+        margin: 0 0 10px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+      }
+
+      .alert p {
+        margin: 0 0 16px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #FECDD3;
+      }
+
+      .alert ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.9rem;
+      }
+
+      .alert li {
+        margin-bottom: 8px;
+      }
+
+      .alert code {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        color: #FFA5B2;
+      }
+
+      /* Responsive adjustment */
+      @media (max-width: 768px) {
+        .section-grid {
+          grid-template-columns: 1fr;
+        }
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-info">
+          <h1>QuantivaIQ India Dashboard</h1>
+          <p>Real-time retail analytics engine (INR) &middot; auto-refreshes every 10s</p>
+        </div>
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          <span>LIVE SIMULATOR ACTIVE</span>
+        </div>
+      </div>
+      {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>

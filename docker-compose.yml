@@ -1,0 +1,89 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: quantivaiq-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: quantivaiq
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quantivaiq-network
+
+  web:
+    build: .
+    container_name: quantivaiq-web
+    env_file:
+      - .env
+    environment:
+      DB_DRIVER: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: quantivaiq
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    networks:
+      - quantivaiq-network
+
+  simulator:
+    build: .
+    container_name: quantivaiq-simulator
+    command: ["python", "python/live_data_generator.py"]
+    env_file:
+      - .env
+    environment:
+      DB_DRIVER: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: quantivaiq
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    networks:
+      - quantivaiq-network
+
+  setup:
+    build: .
+    container_name: quantivaiq-setup
+    command: ["sh", "-c", "python python/db_setup.py && python python/etl_pipeline.py"]
+    env_file:
+      - .env
+    environment:
+      DB_DRIVER: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: quantivaiq
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    depends_on:
+      - postgres
+    profiles:
+      - setup
+    volumes:
+      - .:/app
+    networks:
+      - quantivaiq-network
+
+volumes:
+  postgres_data:
+
+networks:
+  quantivaiq-network:
+    driver: bridge

@@ -1,0 +1,16 @@
+# QuantivaIQ — Python Dependencies for Vercel Deployment
+# This file is minimal to fit within Vercel's Serverless Function size limit (250MB).
+# For full development dependencies (ML/Data Gen), run: pip install -r requirements-dev.txt
+
+# Core Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Database
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+
+# Web Dashboard
+Flask>=2.3.0
+python-dotenv>=1.0.0
+requests>=2.31.0

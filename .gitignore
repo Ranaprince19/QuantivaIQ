@@ -1,0 +1,108 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+env_*/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv
+venv/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.pydevproject
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Database
+*.db
+!quantivaiq.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+pgdata/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# Data and logs
+*.log
+logs/
+*.csv
+datasets/*.csv
+data/
+temp/
+tmp/
+.scratch/
+
+# Reports and outputs
+reports/*.png
+reports/*.pdf
+*.xlsx
+*.xls
+
+# OS specific
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Cache
+.cache/
+*.cache
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# IDE specific
+.vscode/settings.json
+.idea/
+
+# Node modules (if using any Node tools)
+node_modules/
+
+# Package managers
+package-lock.json
+poetry.lock
+.vercel
