@@ -59,14 +59,28 @@ def setup_logging(name="QuantivaIQ"):
 # SQLAlchemy Engine
 def get_engine():
     if is_sqlite():
+        # Vercel opens the SQLite file in read-only URI mode
+        # (mode=ro&uri=true) since serverless filesystems are read-only.
+        # PRAGMA writes (WAL mode, busy_timeout) are not allowed on a
+        # read-only connection and will crash the function if attempted.
+        is_read_only = "mode=ro" in DATABASE_URL
+
+        if is_read_only:
+            return create_engine(DATABASE_URL)
+
         # SQLite locks the whole file on writes by default, so concurrent
-        # processes (ETL + live simulator + dashboard) can hit
+        # local processes (ETL + live simulator + dashboard) can hit
         # "database is locked" errors. WAL mode + a busy timeout lets
         # readers and writers coexist instead of failing immediately.
         engine = create_engine(DATABASE_URL, connect_args={"timeout": 30})
-        with engine.connect() as conn:
-            conn.execute(text("PRAGMA journal_mode=WAL;"))
-            conn.execute(text("PRAGMA busy_timeout=30000;"))
+        try:
+            with engine.connect() as conn:
+                conn.execute(text("PRAGMA journal_mode=WAL;"))
+                conn.execute(text("PRAGMA busy_timeout=30000;"))
+        except Exception:
+            # If PRAGMA setup fails for any reason, still return a working
+            # engine rather than crashing the whole app.
+            pass
         return engine
     return create_engine(DATABASE_URL)
 
